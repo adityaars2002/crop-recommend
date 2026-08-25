@@ -1,0 +1,10 @@
+{
+    "model": "RandomForestClassifier",
+    "accuracy": 0.9954545454545455,
+    "precision_weighted": 0.9956709956709956,
+    "recall_weighted": 0.9954545454545455,
+    "f1_weighted": 0.9954517027687759,
+    "precision_macro": 0.9956709956709957,
+    "recall_macro": 0.9954545454545454,
+    "f1_macro": 0.9954517027687758
+}

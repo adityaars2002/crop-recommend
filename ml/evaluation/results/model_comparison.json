@@ -1,0 +1,45 @@
+{
+    "timestamp": "2026-08-25T16:34:24.264756",
+    "models": [
+        {
+            "Model": "Random Forest",
+            "CV_Accuracy_Mean": 0.99375,
+            "CV_Accuracy_Std": 0.006066521734108723,
+            "CV_F1_Mean": 0.9937033460856128,
+            "CV_F1_Std": 0.006139964809894294,
+            "CV_Precision_Mean": 0.9945573380867498,
+            "CV_Recall_Mean": 0.99375,
+            "Fit_Time_Mean": 0.23173346519470214
+        },
+        {
+            "Model": "Decision Tree",
+            "CV_Accuracy_Mean": 0.9852272727272728,
+            "CV_Accuracy_Std": 0.006818181818181797,
+            "CV_F1_Mean": 0.9852091419492812,
+            "CV_F1_Std": 0.006809619162554993,
+            "CV_Precision_Mean": 0.9865167151390061,
+            "CV_Recall_Mean": 0.9852272727272728,
+            "Fit_Time_Mean": 0.0527705192565918
+        },
+        {
+            "Model": "KNN",
+            "CV_Accuracy_Mean": 0.965340909090909,
+            "CV_Accuracy_Std": 0.012106406677649138,
+            "CV_F1_Mean": 0.9650112202843848,
+            "CV_F1_Std": 0.012438852654645446,
+            "CV_Precision_Mean": 0.9697270893283143,
+            "CV_Recall_Mean": 0.965340909090909,
+            "Fit_Time_Mean": 0.019881391525268556
+        },
+        {
+            "Model": "Logistic Regression",
+            "CV_Accuracy_Mean": 0.9681818181818181,
+            "CV_Accuracy_Std": 0.006577180058403534,
+            "CV_F1_Mean": 0.9678236006626216,
+            "CV_F1_Std": 0.006765232166249332,
+            "CV_Precision_Mean": 0.9710121315342256,
+            "CV_Recall_Mean": 0.9681818181818181,
+            "Fit_Time_Mean": 0.046866989135742186
+        }
+    ]
+}

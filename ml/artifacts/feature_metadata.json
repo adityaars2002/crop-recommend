@@ -1,0 +1,15 @@
+{
+    "features": [
+        "N",
+        "P",
+        "K",
+        "temperature",
+        "humidity",
+        "ph",
+        "rainfall"
+    ],
+    "target": "label",
+    "model": "RandomForestClassifier",
+    "version": "1.0",
+    "description": "Feature metadata for the Crop Recommendation ML model. The feature order defined here is the single source of truth and must remain consistent across all components."
+}

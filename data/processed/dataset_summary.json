@@ -1,0 +1,94 @@
+{
+    "rows": 2200,
+    "columns": 8,
+    "features": [
+        "N",
+        "P",
+        "K",
+        "temperature",
+        "humidity",
+        "ph",
+        "rainfall"
+    ],
+    "target": "label",
+    "number_of_classes": 22,
+    "crop_classes": [
+        "apple",
+        "banana",
+        "blackgram",
+        "chickpea",
+        "coconut",
+        "coffee",
+        "cotton",
+        "grapes",
+        "jute",
+        "kidneybeans",
+        "lentil",
+        "maize",
+        "mango",
+        "mothbeans",
+        "mungbean",
+        "muskmelon",
+        "orange",
+        "papaya",
+        "pigeonpeas",
+        "pomegranate",
+        "rice",
+        "watermelon"
+    ],
+    "missing_values": {
+        "N": 0,
+        "P": 0,
+        "K": 0,
+        "temperature": 0,
+        "humidity": 0,
+        "ph": 0,
+        "rainfall": 0,
+        "label": 0
+    },
+    "duplicate_rows": 0,
+    "statistics": {
+        "N": {
+            "min": 0.0,
+            "max": 140.0,
+            "mean": 50.5518,
+            "std": 36.9173
+        },
+        "P": {
+            "min": 5.0,
+            "max": 145.0,
+            "mean": 53.3627,
+            "std": 32.9859
+        },
+        "K": {
+            "min": 5.0,
+            "max": 205.0,
+            "mean": 48.1491,
+            "std": 50.6479
+        },
+        "temperature": {
+            "min": 8.8257,
+            "max": 43.6755,
+            "mean": 25.6162,
+            "std": 5.0637
+        },
+        "humidity": {
+            "min": 14.258,
+            "max": 99.9819,
+            "mean": 71.4818,
+            "std": 22.2638
+        },
+        "ph": {
+            "min": 3.5048,
+            "max": 9.9351,
+            "mean": 6.4695,
+            "std": 0.7739
+        },
+        "rainfall": {
+            "min": 20.2113,
+            "max": 298.5601,
+            "mean": 103.4637,
+            "std": 54.9584
+        }
+    }
+}

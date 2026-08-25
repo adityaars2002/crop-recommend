@@ -1,0 +1,59 @@
+# ==============================================================================
+# Smart Agriculture System - Git Ignore
+# ==============================================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# --- Virtual Environment ---
+venv/
+env/
+.venv/
+.env
+
+# --- Django ---
+*.sqlite3
+db.sqlite3
+staticfiles/
+mediafiles/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- ML Artifacts (large files) ---
+ml/artifacts/*.joblib
+ml/artifacts/*.pkl
+ml/artifacts/*.h5
+ml/evaluation/results/*.png
+
+# --- Data (large files) ---
+# Uncomment if you don't want to track raw data in git
+# data/raw/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.ipynb
+
+# --- Misc ---
+*.log
+*.bak
+*.tmp

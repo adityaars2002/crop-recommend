@@ -1,0 +1,31 @@
+# ==============================================================================
+# Smart Agriculture System - Crop Recommendation
+# Python Dependencies
+# ==============================================================================
+
+# --- Django & Web Framework ---
+Django>=4.2,<5.0
+djangorestframework>=3.14,<4.0
+django-cors-headers>=4.3,<5.0
+drf-spectacular>=0.27,<1.0
+
+# --- Environment & Configuration ---
+python-dotenv>=1.0,<2.0
+
+# --- Machine Learning ---
+numpy>=1.24
+pandas>=2.0,<3.0
+scikit-learn>=1.3,<2.0
+joblib>=1.3,<2.0
+
+# --- Visualization ---
+matplotlib>=3.7,<4.0
+seaborn>=0.13,<1.0
+
+# --- Optional: XGBoost (for model comparison) ---
+# Uncomment if you want to include XGBoost in model comparison
+# xgboost>=2.0,<3.0
+
+# --- Testing ---
+pytest>=7.4,<9.0
+pytest-django>=4.5,<5.0
