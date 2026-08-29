@@ -180,9 +180,76 @@ Get a paginated list of all past recommendation requests.
 
 ---
 
+## 5. Disease Prediction Endpoint
+
+Get a machine-learning powered prediction for crop disease based on a leaf image upload.
+
+- **Endpoint:** `POST /api/v1/crops/disease/predict/`
+- **Content-Type:** `multipart/form-data`
+
+### Request Body
+Requires a single file upload field.
+
+| Field | Description | Constraints |
+|-------|-------------|-------------|
+| `image` | Plant leaf image | Valid image file (JPEG, PNG, etc.) |
+
+### cURL Example
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/crops/disease/predict/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "image=@/path/to/your/leaf_image.jpg"
+```
+
+### Postman
+Set method to `POST`. Enter URL: `http://127.0.0.1:8000/api/v1/crops/disease/predict/`. Under **Body**, select **form-data**. Add a key named `image`, change its type to **File**, and select a leaf image from your computer.
+
+### Successful Response (HTTP 200 OK)
+Returns the top prediction as a dictionary and the top 3 predictions as an array.
+
+```json
+{
+    "success": true,
+    "data": {
+        "prediction": {
+            "class_name": "Tomato___Late_blight",
+            "crop": "Tomato",
+            "disease": "Late blight",
+            "status": "diseased",
+            "score": 0.998243
+        },
+        "top_3": [
+            {
+                "class_name": "Tomato___Late_blight",
+                "crop": "Tomato",
+                "disease": "Late blight",
+                "status": "diseased",
+                "score": 0.998243
+            },
+            {
+                "class_name": "Tomato___Early_blight",
+                "crop": "Tomato",
+                "disease": "Early blight",
+                "status": "diseased",
+                "score": 0.001421
+            },
+            {
+                "class_name": "Tomato___healthy",
+                "crop": "Tomato",
+                "disease": "healthy",
+                "status": "healthy",
+                "score": 0.000310
+            }
+        ]
+    }
+}
+```
+
+---
+
 ## HTTP Status Codes
 * **200 OK:** Request successful.
-* **400 Bad Request:** Validation failed (e.g., missing fields, invalid ranges).
+* **400 Bad Request:** Validation failed (e.g., missing fields, invalid ranges, invalid image).
 * **404 Not Found:** Resource does not exist.
 * **503 Service Unavailable:** The ML model failed to load or crashed during inference.
 * **500 Internal Server Error:** Unexpected backend exception.
@@ -198,6 +265,8 @@ data class ApiResponse<T>(
     val error: ApiError?
 )
 ```
-The endpoint to hit for recommendations will be `POST /api/v1/crops/recommend/`. The response data will map perfectly to a `RecommendationHistory` object containing the `input` and a list of `RecommendationResult` objects.
+The endpoints to use:
+- Crop Recommendation: `POST /api/v1/crops/recommend/`
+- Disease Detection: `POST /api/v1/crops/disease/predict/` (Ensure you use `MultipartBody.Part` in Retrofit for the image).
 
-**Limitation Disclaimer:** The `score` represents the Random Forest model's confidence probability. It is NOT a guarantee of agricultural success. Ensure the Android UI displays this nuance.
+**Limitation Disclaimer:** The `score` represents the ML model's confidence probability. It is NOT a guarantee of agricultural success or perfect diagnosis. Ensure the Android UI displays this nuance.

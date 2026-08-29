@@ -17,6 +17,9 @@ build/
 venv/
 env/
 .venv/
+crop-disease-venv/
+
+# --- Environment Secrets ---
 .env
 
 # --- Django ---
@@ -39,15 +42,26 @@ mediafiles/
 Thumbs.db
 desktop.ini
 
-# --- ML Artifacts (large files) ---
+# --- ML Artifacts (Crop Recommendation) ---
 ml/artifacts/*.joblib
 ml/artifacts/*.pkl
 ml/artifacts/*.h5
 ml/evaluation/results/*.png
 
-# --- Data (large files) ---
+# --- ML Artifacts (Plant Disease Detection) ---
+# Ignore experimental models
+ml/disease/artifacts/exp_*.keras
+# Do NOT ignore the final model
+!ml/disease/artifacts/plant_disease_model.keras
+
+# --- Data & Datasets (large files) ---
 # Uncomment if you don't want to track raw data in git
 # data/raw/
+PlantVillage-Dataset-master/
+PlantVillage-Dataset-master.zip
+temp_plantvillage/
+data/disease/raw/
+data/disease/processed/
 
 # --- Jupyter ---
 .ipynb_checkpoints/
@@ -57,21 +71,3 @@ ml/evaluation/results/*.png
 *.log
 *.bak
 *.tmp
-
-# Large datasets
-PlantVillage-Dataset-master/
-PlantVillage-Dataset-master.zip
-data/disease/processed/
-temp_plantvillage/
-data/disease/raw/
-
-# Python environments
-venv/
-crop-disease-venv/
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Environment secrets
-.env

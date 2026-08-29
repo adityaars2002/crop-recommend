@@ -1,5 +1,5 @@
 # ==============================================================================
-# Smart Agriculture System - Crop Recommendation
+# Smart Agriculture System - Crop Recommendation & Plant Disease Detection
 # Python Dependencies
 # ==============================================================================
 
@@ -12,7 +12,7 @@ drf-spectacular>=0.27,<1.0
 # --- Environment & Configuration ---
 python-dotenv>=1.0,<2.0
 
-# --- Machine Learning & Images ---
+# --- Machine Learning (Crop Recommendation & Disease Detection) ---
 numpy>=1.24
 pandas>=2.0,<3.0
 scikit-learn>=1.3,<2.0
