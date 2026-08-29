@@ -1,0 +1,20 @@
+{
+    "dataset_name": "PlantVillage",
+    "total_images_processed": 54305,
+    "total_classes": 38,
+    "corrupted_images": 0,
+    "exact_duplicates": 21,
+    "duplicate_groups": 21,
+    "crops": 14,
+    "diseases": 21,
+    "image_dimensions": [
+        {
+            "width": 256,
+            "height": 256
+        }
+    ],
+    "formats": [
+        "JPEG",
+        "PNG"
+    ]
+}

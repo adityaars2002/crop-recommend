@@ -1,0 +1,14 @@
+{
+    "model_name": "MobileNetV2",
+    "model_version": "1.0.0",
+    "input_size": [
+        224,
+        224,
+        3
+    ],
+    "num_classes": 38,
+    "preprocessing": "mobilenet_v2.preprocess_input",
+    "random_state": 42,
+    "selected_experiment": "exp_finetuned",
+    "validation_accuracy": 0.9716957807540894
+}

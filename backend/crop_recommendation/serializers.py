@@ -63,3 +63,10 @@ class CropRecommendationHistorySerializer(serializers.ModelSerializer):
             "ph": obj.ph,
             "rainfall": obj.rainfall
         }
+
+class DiseasePredictionInputSerializer(serializers.Serializer):
+    """
+    Validates input for plant disease prediction.
+    Expects an image upload.
+    """
+    image = serializers.ImageField(required=True, help_text="Plant leaf image for disease prediction.")

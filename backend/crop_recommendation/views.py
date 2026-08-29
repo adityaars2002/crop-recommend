@@ -8,9 +8,29 @@ from .models import Crop, CropRecommendationRequest
 from .serializers import (
     CropSerializer, 
     CropRecommendationInputSerializer, 
-    CropRecommendationHistorySerializer
+    CropRecommendationHistorySerializer,
+    DiseasePredictionInputSerializer
 )
 from .services.recommendation_service import generate_recommendation, ModelUnavailableError
+
+import os
+import sys
+import tempfile
+import logging
+from rest_framework.parsers import MultiPartParser, FormParser
+
+logger = logging.getLogger(__name__)
+
+# Ensure ml directory can be imported
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
+
+try:
+    from ml.disease.inference.predictor import predict_disease
+except ImportError:
+    logger.error("Failed to import predict_disease from ml.disease.inference.predictor")
+    predict_disease = None
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -147,3 +167,84 @@ class CropRecommendationView(views.APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+class DiseasePredictionView(views.APIView):
+    """
+    API endpoint to predict plant disease from an uploaded leaf image.
+    """
+    parser_classes = [MultiPartParser, FormParser]
+
+    @extend_schema(
+        request=DiseasePredictionInputSerializer,
+        responses={200: dict},
+        description="Upload a plant leaf image to predict its disease and status.",
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = DiseasePredictionInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        image_file = serializer.validated_data['image']
+        temp_path = None
+        
+        try:
+            if predict_disease is None:
+                return Response({
+                    "success": False,
+                    "error": {
+                        "code": "MODEL_UNAVAILABLE",
+                        "message": "ML inference module is not available on this server."
+                    }
+                }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+            # Save uploaded image to a temporary file for the ML inference script
+            fd, temp_path = tempfile.mkstemp(suffix=".jpg")
+            with os.fdopen(fd, 'wb') as f:
+                for chunk in image_file.chunks():
+                    f.write(chunk)
+                    
+            # Call inference
+            top_prediction, top3_predictions = predict_disease(temp_path)
+            
+            return Response({
+                "success": True,
+                "data": {
+                    "prediction": top_prediction,
+                    "top_3": top3_predictions
+                }
+            }, status=status.HTTP_200_OK)
+            
+        except FileNotFoundError as e:
+            logger.error(f"Model file not found: {e}")
+            return Response({
+                "success": False,
+                "error": {
+                    "code": "MODEL_NOT_FOUND",
+                    "message": "The plant disease model is not available."
+                }
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            
+        except ValueError as e:
+            return Response({
+                "success": False,
+                "error": {
+                    "code": "INVALID_IMAGE",
+                    "message": str(e)
+                }
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Exception as e:
+            logger.exception("Unexpected error during disease prediction")
+            return Response({
+                "success": False,
+                "error": {
+                    "code": "INTERNAL_SERVER_ERROR",
+                    "message": "An unexpected error occurred while predicting the disease."
+                }
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+        finally:
+            if temp_path and os.path.exists(temp_path):
+                try:
+                    os.remove(temp_path)
+                except Exception as e:
+                    logger.error(f"Failed to clean up temporary file {temp_path}: {e}")

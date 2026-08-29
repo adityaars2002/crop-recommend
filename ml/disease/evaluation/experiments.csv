@@ -1,0 +1,4 @@
+experiment,backbone,class_weights,frozen_layers,learning_rate,epochs,validation_accuracy,validation_loss,notes
+exp_baseline,MobileNetV2,False,All,0.001,15,0.951513648033142,0.154158279299736,Stage 1 baseline
+exp_class_weight,MobileNetV2,True,All,0.001,15,0.9492985606193542,0.1567700058221817,Stage 2 class weights
+exp_finetuned,MobileNetV2,True,All but last 30,1e-05,10,0.9716957807540894,0.08339446038007736,Stage 3 fine-tuned

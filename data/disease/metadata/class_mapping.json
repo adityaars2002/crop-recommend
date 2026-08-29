@@ -1,0 +1,230 @@
+{
+    "0": {
+        "class_name": "Apple___Apple_scab",
+        "crop": "Apple",
+        "disease": "Apple scab",
+        "status": "diseased"
+    },
+    "1": {
+        "class_name": "Apple___Black_rot",
+        "crop": "Apple",
+        "disease": "Black rot",
+        "status": "diseased"
+    },
+    "2": {
+        "class_name": "Apple___Cedar_apple_rust",
+        "crop": "Apple",
+        "disease": "Cedar apple rust",
+        "status": "diseased"
+    },
+    "3": {
+        "class_name": "Apple___healthy",
+        "crop": "Apple",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "4": {
+        "class_name": "Blueberry___healthy",
+        "crop": "Blueberry",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "5": {
+        "class_name": "Cherry_(including_sour)___Powdery_mildew",
+        "crop": "Cherry (including sour)",
+        "disease": "Powdery mildew",
+        "status": "diseased"
+    },
+    "6": {
+        "class_name": "Cherry_(including_sour)___healthy",
+        "crop": "Cherry (including sour)",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "7": {
+        "class_name": "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+        "crop": "Corn (maize)",
+        "disease": "Cercospora leaf spot Gray leaf spot",
+        "status": "diseased"
+    },
+    "8": {
+        "class_name": "Corn_(maize)___Common_rust_",
+        "crop": "Corn (maize)",
+        "disease": "Common rust",
+        "status": "diseased"
+    },
+    "9": {
+        "class_name": "Corn_(maize)___Northern_Leaf_Blight",
+        "crop": "Corn (maize)",
+        "disease": "Northern Leaf Blight",
+        "status": "diseased"
+    },
+    "10": {
+        "class_name": "Corn_(maize)___healthy",
+        "crop": "Corn (maize)",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "11": {
+        "class_name": "Grape___Black_rot",
+        "crop": "Grape",
+        "disease": "Black rot",
+        "status": "diseased"
+    },
+    "12": {
+        "class_name": "Grape___Esca_(Black_Measles)",
+        "crop": "Grape",
+        "disease": "Esca (Black Measles)",
+        "status": "diseased"
+    },
+    "13": {
+        "class_name": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+        "crop": "Grape",
+        "disease": "Leaf blight (Isariopsis Leaf Spot)",
+        "status": "diseased"
+    },
+    "14": {
+        "class_name": "Grape___healthy",
+        "crop": "Grape",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "15": {
+        "class_name": "Orange___Haunglongbing_(Citrus_greening)",
+        "crop": "Orange",
+        "disease": "Haunglongbing (Citrus greening)",
+        "status": "diseased"
+    },
+    "16": {
+        "class_name": "Peach___Bacterial_spot",
+        "crop": "Peach",
+        "disease": "Bacterial spot",
+        "status": "diseased"
+    },
+    "17": {
+        "class_name": "Peach___healthy",
+        "crop": "Peach",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "18": {
+        "class_name": "Pepper,_bell___Bacterial_spot",
+        "crop": "Pepper, bell",
+        "disease": "Bacterial spot",
+        "status": "diseased"
+    },
+    "19": {
+        "class_name": "Pepper,_bell___healthy",
+        "crop": "Pepper, bell",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "20": {
+        "class_name": "Potato___Early_blight",
+        "crop": "Potato",
+        "disease": "Early blight",
+        "status": "diseased"
+    },
+    "21": {
+        "class_name": "Potato___Late_blight",
+        "crop": "Potato",
+        "disease": "Late blight",
+        "status": "diseased"
+    },
+    "22": {
+        "class_name": "Potato___healthy",
+        "crop": "Potato",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "23": {
+        "class_name": "Raspberry___healthy",
+        "crop": "Raspberry",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "24": {
+        "class_name": "Soybean___healthy",
+        "crop": "Soybean",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "25": {
+        "class_name": "Squash___Powdery_mildew",
+        "crop": "Squash",
+        "disease": "Powdery mildew",
+        "status": "diseased"
+    },
+    "26": {
+        "class_name": "Strawberry___Leaf_scorch",
+        "crop": "Strawberry",
+        "disease": "Leaf scorch",
+        "status": "diseased"
+    },
+    "27": {
+        "class_name": "Strawberry___healthy",
+        "crop": "Strawberry",
+        "disease": "healthy",
+        "status": "healthy"
+    },
+    "28": {
+        "class_name": "Tomato___Bacterial_spot",
+        "crop": "Tomato",
+        "disease": "Bacterial spot",
+        "status": "diseased"
+    },
+    "29": {
+        "class_name": "Tomato___Early_blight",
+        "crop": "Tomato",
+        "disease": "Early blight",
+        "status": "diseased"
+    },
+    "30": {
+        "class_name": "Tomato___Late_blight",
+        "crop": "Tomato",
+        "disease": "Late blight",
+        "status": "diseased"
+    },
+    "31": {
+        "class_name": "Tomato___Leaf_Mold",
+        "crop": "Tomato",
+        "disease": "Leaf Mold",
+        "status": "diseased"
+    },
+    "32": {
+        "class_name": "Tomato___Septoria_leaf_spot",
+        "crop": "Tomato",
+        "disease": "Septoria leaf spot",
+        "status": "diseased"
+    },
+    "33": {
+        "class_name": "Tomato___Spider_mites Two-spotted_spider_mite",
+        "crop": "Tomato",
+        "disease": "Spider mites Two-spotted spider mite",
+        "status": "diseased"
+    },
+    "34": {
+        "class_name": "Tomato___Target_Spot",
+        "crop": "Tomato",
+        "disease": "Target Spot",
+        "status": "diseased"
+    },
+    "35": {
+        "class_name": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+        "crop": "Tomato",
+        "disease": "Tomato Yellow Leaf Curl Virus",
+        "status": "diseased"
+    },
+    "36": {
+        "class_name": "Tomato___Tomato_mosaic_virus",
+        "crop": "Tomato",
+        "disease": "Tomato mosaic virus",
+        "status": "diseased"
+    },
+    "37": {
+        "class_name": "Tomato___healthy",
+        "crop": "Tomato",
+        "disease": "healthy",
+        "status": "healthy"
+    }
+}

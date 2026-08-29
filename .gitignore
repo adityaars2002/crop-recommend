@@ -57,3 +57,21 @@ ml/evaluation/results/*.png
 *.log
 *.bak
 *.tmp
+
+# Large datasets
+PlantVillage-Dataset-master/
+PlantVillage-Dataset-master.zip
+data/disease/processed/
+temp_plantvillage/
+data/disease/raw/
+
+# Python environments
+venv/
+crop-disease-venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment secrets
+.env
