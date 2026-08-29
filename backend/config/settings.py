@@ -179,10 +179,14 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Smart Agriculture System API',
     'DESCRIPTION': (
         'REST API for the Smart Agriculture System.\n\n'
-        'Currently provides crop recommendation based on soil and environmental '
-        'parameters using a Random Forest machine learning model.\n\n'
-        '**Disclaimer:** Recommendations are based on patterns learned from '
-        'training data and do not guarantee crop success.'
+        'Provides two AI/ML capabilities:\n'
+        '1. **Crop Recommendation** — predicts suitable crops based on soil and '
+        'environmental parameters using a Random Forest model.\n'
+        '2. **Plant Disease Detection** — classifies plant leaf images into 38 '
+        'disease/health categories using a fine-tuned MobileNetV2 model.\n\n'
+        '**Disclaimer:** Recommendations and predictions are based on patterns '
+        'learned from training data and do not guarantee crop success or '
+        'perfect diagnosis.'
     ),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
@@ -193,6 +197,10 @@ SPECTACULAR_SETTINGS = {
         {
             'name': 'Crops',
             'description': 'Crop information and recommendation endpoints',
+        },
+        {
+            'name': 'Disease Detection',
+            'description': 'Plant disease prediction from leaf images',
         },
     ],
 }

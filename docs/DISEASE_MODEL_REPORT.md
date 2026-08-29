@@ -39,13 +39,19 @@ Three-stage training approach:
 3. **Stage 3 (Fine-tuning):** Unfreeze the top portion of the backbone and train with a significantly reduced learning rate (1e-5) to fine-tune features specifically for plant diseases. BatchNormalization layers remain frozen to preserve running statistics.
 
 ## 8. Baseline experiment
-*(Results will be populated in `experiments.csv` after running the training script)*
+- **Validation Accuracy:** 0.9515
+- **Validation Loss:** 0.1542
+- **Notes:** Stage 1 — All backbone layers frozen, classification head trained for 15 epochs.
 
 ## 9. Class-weight experiment
-*(Results will be populated in `experiments.csv` after running the training script)*
+- **Validation Accuracy:** 0.9493
+- **Validation Loss:** 0.1568
+- **Notes:** Stage 2 — Class weights applied to handle imbalance, backbone still frozen.
 
 ## 10. Fine-tuning experiment
-*(Results will be populated in `experiments.csv` after running the training script)*
+- **Validation Accuracy:** 0.9717
+- **Validation Loss:** 0.0834
+- **Notes:** Stage 3 — Last 30 layers unfrozen, BatchNormalization layers kept frozen, learning rate 1e-5.
 
 ## 11. Model comparison
 The experiments are compared based on **Validation Accuracy** and **Validation Loss**. The best model is selected without referencing the Test Set.
@@ -54,10 +60,10 @@ The experiments are compared based on **Validation Accuracy** and **Validation L
 The final selected model is saved to `ml/disease/artifacts/plant_disease_model.keras`.
 
 ## 13. Test performance
-*(Run `evaluate.py` to generate the Classification Report and populate these fields)*
-- **Accuracy:** ...
-- **Macro F1:** ...
-- **Weighted F1:** ...
+Evaluated on the held-out test set (8,176 images):
+- **Accuracy:** 0.9705 (97.05%)
+- **Macro F1:** 0.9657
+- **Weighted F1:** 0.9706
 
 ## 14. Confusion matrix analysis
 *(See `ml/disease/evaluation/plots/confusion_matrix.png`)*
@@ -76,7 +82,10 @@ The final selected model is saved to `ml/disease/artifacts/plant_disease_model.k
 A sample of incorrect predictions (with probabilities) is saved in `ml/disease/evaluation/misclassified/` to facilitate error analysis.
 
 ## 19. Model size
-*(See `ml/disease/evaluation/model_info.json`)*
+- **Total Parameters:** 2,306,662
+- **Trainable Parameters:** 1,559,398
+- **Non-trainable Parameters:** 747,264
+- **Model File Size:** ~33.2 MB
 
 ## 20. Limitations
 - **Prototype Status:** The model demonstrates high capability on the dataset distribution, but lacks robustness against out-of-distribution (OOD) field samples.

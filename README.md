@@ -1,6 +1,6 @@
 # 🌾 Smart Agriculture System — Crop Recommendation and Plant Disease Detection
 
-> An AI/ML-powered decision-support system that provides crop recommendations based on environmental conditions and detects plant diseases from leaf images.
+> An AI/ML-powered decision-support system that recommends suitable crops based on environmental conditions and detects plant diseases from leaf images.
 
 **⚠️ Disclaimer:** This system provides recommendations and predictions based on patterns learned from training data. It does not guarantee crop success or perfect disease diagnosis. Always consult local agricultural experts before making farming decisions.
 
@@ -10,63 +10,125 @@
 
 This project provides a comprehensive agricultural assistance platform, integrating two major machine learning capabilities through a Django REST Framework backend:
 
-1. **Crop Recommendation:** Recommends the most suitable crops based on soil nutrients (N, P, K), pH, temperature, humidity, and rainfall.
-2. **Plant Disease Detection:** Analyzes images of plant leaves to detect 38 different categories of crop diseases and healthy states.
+1. **Crop Recommendation:** Uses 7 soil and environmental parameters (Nitrogen, Phosphorus, Potassium, Temperature, Humidity, pH, Rainfall) to recommend the most suitable crops for cultivation using a Random Forest Classifier.
 
-These two capabilities complement each other by assisting farmers in both the planning phase (choosing the right crop) and the maintenance phase (identifying and treating diseases).
+2. **Plant Disease Detection:** Accepts a photograph of a plant leaf and classifies it into one of 38 categories (covering multiple crops and their diseases, as well as healthy states) using a fine-tuned MobileNetV2 deep learning model.
+
+These two capabilities complement each other by assisting farmers in both the **planning phase** (choosing the right crop) and the **maintenance phase** (identifying and treating diseases early).
 
 ---
 
 ## ✨ Key Features
 
-- **Crop Recommendation:**
-  - Machine learning based on 7 environmental/soil parameters.
-  - Outputs top 3 crop recommendations with confidence scores.
-- **Plant Disease Detection:**
-  - 38-class plant disease classification.
-  - Detects both healthy and diseased states across multiple crops.
-  - Returns top-3 disease predictions with confidence scores.
-  - Powered by a fine-tuned MobileNetV2 transfer learning model.
-  - Accepts multipart image uploads via the API.
-- **Django REST Framework API:**
-  - Unified backend serving both ML models.
-  - Swagger/OpenAPI documentation (via `drf-spectacular`).
-- **Comprehensive ML Pipelines:**
-  - GPU-accelerated training scripts.
-  - Model evaluation with confusion matrices and per-class metrics.
-  - Misclassification analysis.
+### Crop Recommendation
+- Soil and environmental parameter-based prediction (7 inputs)
+- Random Forest classifier trained on 22 crop classes
+- Top-3 crop recommendations with probability scores
+- Recommendation history tracking
+
+### Plant Disease Detection
+- 38-class plant disease/health classification
+- Covers 14 crop species
+- Identifies both healthy and diseased states
+- MobileNetV2 transfer learning with fine-tuning
+- Top-3 predictions with confidence scores
+- Returns crop name, disease name, health status, and score
+- Multipart image upload via REST API
+
+### Backend / API
+- Django REST Framework API serving both ML models
+- Swagger/OpenAPI documentation via `drf-spectacular`
+- Consistent JSON response envelopes
+- Input validation and error handling
+- Paginated crop listing and recommendation history
+
+---
+
+## 🛠️ Technology Stack
+
+### Backend
+| Technology | Purpose |
+|---|---|
+| Python 3.12 | Core language |
+| Django 4.2 | Web framework |
+| Django REST Framework | REST API |
+| drf-spectacular | OpenAPI / Swagger docs |
+| python-dotenv | Environment configuration |
+
+### Machine Learning
+| Technology | Purpose |
+|---|---|
+| Scikit-learn | Crop recommendation (Random Forest) |
+| TensorFlow / Keras | Disease detection (MobileNetV2) |
+| MobileNetV2 | Pretrained CNN backbone (ImageNet) |
+
+### Data & Image Processing
+| Technology | Purpose |
+|---|---|
+| NumPy | Numerical computation |
+| Pandas | Data analysis |
+| Pillow (PIL) | Image loading and processing |
+
+### Visualization / Evaluation
+| Technology | Purpose |
+|---|---|
+| Matplotlib | Training plots, confusion matrix |
+| Seaborn | Data distribution visualizations |
+| Scikit-learn metrics | Classification reports, F1 scores |
+
+### Development Environment
+| Technology | Purpose |
+|---|---|
+| Git | Version control |
+| SQLite | Development database |
+| WSL2 + Ubuntu | TensorFlow GPU training environment |
+| NVIDIA CUDA / cuDNN | GPU acceleration for model training |
 
 ---
 
 ## 🏗️ System Architecture
 
-### 1. General Flow
+### General Flow
+
 ```
-User/Client Application
-       │
-       ▼
-Django REST API
-       │
-       ├─────────────────────────────────┐
-       ▼                                 ▼
-Crop Recommendation              Disease Detection
-(Tabular Data)                   (Image Upload)
-       │                                 │
-       ▼                                 ▼
-ML Inference                     ML Inference
-(Random Forest)                  (MobileNetV2)
-       │                                 │
-       ▼                                 ▼
-JSON Response                    JSON Response
+User / Client (Postman, curl, future Android app)
+      │
+      ▼
+Django REST Framework API
+      │
+      ├──────────────────────────────────┐
+      │                                  │
+      ▼                                  ▼
+Crop Recommendation               Disease Detection
+(JSON input)                      (Image upload)
+      │                                  │
+      ▼                                  ▼
+Random Forest Model               MobileNetV2 Model
+      │                                  │
+      ▼                                  ▼
+Crop probabilities                38-class probabilities
+      │                                  │
+      └────────────┬─────────────────────┘
+                   │
+                   ▼
+           JSON Response
 ```
 
-### 2. Disease Detection Flow
-1. **Image Upload:** The client sends an image via `multipart/form-data` to the Django API.
-2. **Temporary Handling:** Django securely saves the image to a temporary file.
-3. **Preprocessing:** The image is resized to 224×224×3 and preprocessed for MobileNetV2.
-4. **Model Inference:** The trained `.keras` model predicts the class probabilities across 38 classes.
-5. **Post-processing:** The system retrieves the top prediction and top 3 candidates, formatting them into crop, disease, status, and score.
-6. **JSON Response:** The backend returns the results to the client.
+### Disease Detection Pipeline
+
+```
+Image Upload (multipart/form-data)
+    → Django API receives file
+    → Saved to temporary file
+    → Image resized to 224 × 224 × 3
+    → MobileNetV2 preprocess_input (scale to [-1, 1])
+    → Trained .keras model inference
+    → 38-class softmax prediction
+    → Top prediction + Top 3 extracted
+    → Each prediction mapped to: crop / disease / status / score
+    → Temporary file cleaned up
+    → JSON response returned
+```
 
 ---
 
@@ -74,102 +136,248 @@ JSON Response                    JSON Response
 
 ```
 crop-recomend/
-├── backend/              # Django project and API
-│   ├── config/           # Django settings and routing
-│   └── crop_recommendation/ # Django app (serializers, views, models)
-├── data/                 # Raw tabular datasets (images ignored in Git)
-├── docs/                 # Detailed documentation files
-├── ml/                   # Machine Learning pipelines
-│   ├── preprocessing/    # Crop recommendation ML
-│   ├── training/         # Crop recommendation ML
-│   └── disease/          # Plant Disease ML Module
-│       ├── analysis/     # Data distribution and analysis scripts
-│       ├── artifacts/    # Trained models (.keras files)
-│       ├── data/         # PlantVillage dataset handling
-│       ├── evaluation/   # Evaluation metrics, confusion matrix, and JSON reports
-│       ├── inference/    # Standalone prediction script
-│       ├── metadata/     # Class mappings and weights
-│       └── training/     # Model training and fine-tuning scripts
-├── scripts/              # Helper scripts (e.g., CLI prediction)
-└── requirements.txt      # Python dependencies
+├── backend/                        # Django project
+│   ├── config/                     # Django settings, root URLs, WSGI/ASGI
+│   ├── crop_recommendation/        # Main Django app
+│   │   ├── services/               # Business logic (crop predictor)
+│   │   ├── views.py                # API views (recommendation + disease)
+│   │   ├── serializers.py          # Input validation
+│   │   ├── models.py               # Crop, Recommendation models
+│   │   ├── urls.py                 # App URL routing
+│   │   └── tests/                  # Unit & API tests
+│   ├── db.sqlite3                  # Development database
+│   └── manage.py
+│
+├── ml/                             # Machine Learning pipelines
+│   ├── config.py                   # Crop recommendation ML config
+│   ├── preprocessing/              # Crop data validation & cleaning
+│   ├── training/                   # Crop model training & comparison
+│   ├── evaluation/                 # Crop model metrics
+│   ├── inference/                  # Crop standalone prediction
+│   ├── artifacts/                  # Crop model artifacts (.joblib)
+│   └── disease/                    # Plant Disease Detection module
+│       ├── training/               # Training scripts & config
+│       │   ├── config.py           # Hyperparameters (image size, batch, LR)
+│       │   └── train_mobilenet.py  # 3-stage training pipeline
+│       ├── inference/              # Disease inference
+│       │   └── predictor.py        # Load model, predict, format results
+│       ├── evaluation/             # Evaluation results
+│       │   ├── experiments.csv     # Experiment comparison
+│       │   ├── classification_report.txt
+│       │   ├── model_info.json     # Parameter counts, F1 scores
+│       │   └── plots/              # Confusion matrix, training curves
+│       ├── artifacts/              # Trained models
+│       │   └── plant_disease_model.keras  # Final production model
+│       ├── metadata/               # Class mappings
+│       │   ├── class_mapping.json  # Index → crop/disease/status
+│       │   ├── class_names.json    # Ordered class name list
+│       │   └── class_weights.json  # Class weights for imbalanced training
+│       ├── analysis/               # Dataset EDA plots
+│       └── data/                   # Dataset loading utilities
+│
+├── data/                           # Datasets (tabular; images excluded from Git)
+├── docs/                           # Documentation
+├── scripts/                        # Helper scripts
+│   ├── predict_disease.py          # CLI disease prediction
+│   ├── prepare_disease_dataset.py  # Dataset preparation & EDA
+│   └── generate_report.py         # Report generation
+│
+├── requirements.txt
+├── .env.example
+└── .gitignore
 ```
 
 ---
 
 ## 🌾 Crop Recommendation Model
 
-- **Input Features:** 7 (Nitrogen, Phosphorus, Potassium, Temperature, Humidity, pH, Rainfall)
-- **Model / Algorithm:** Random Forest Classifier
-- **Output Classes:** 22 unique crop categories
-- **API Endpoint:** `POST /api/v1/crops/recommend/`
-- **Response:** JSON list of the top 3 recommended crops with probability scores.
+| Property | Value |
+|---|---|
+| **Algorithm** | Random Forest Classifier |
+| **Library** | scikit-learn |
+| **Input Features** | 7 — Nitrogen (N), Phosphorus (P), Potassium (K), Temperature, Humidity, pH, Rainfall |
+| **Output** | 22 crop classes |
+| **Prediction** | Top 3 crops with probability scores |
+| **API Endpoint** | `POST /api/v1/crops/recommend/` |
+| **Test Accuracy** | 99.55% |
+
+For full model details, see [docs/ML_MODEL_REPORT.md](docs/ML_MODEL_REPORT.md).
 
 ---
 
 ## 🌿 Plant Disease Detection Model
 
-The disease detection module is built using transfer learning on the PlantVillage dataset.
+### Architecture
 
-- **Model Architecture:** MobileNetV2 (pretrained on ImageNet)
-- **Input Image Size:** 224 × 224 × 3
-- **Number of Classes:** 38
-- **Batch Size:** 16 (during final training)
-- **Mixed Precision:** Enabled (`mixed_float16`)
-- **Final Layer:** Float32 output for numerical stability
+| Property | Value |
+|---|---|
+| **Base Model** | MobileNetV2 (pretrained on ImageNet) |
+| **Input Size** | 224 × 224 × 3 (RGB) |
+| **Number of Classes** | 38 |
+| **Classification Head** | GlobalAveragePooling2D → Dropout(0.2) → Dense(38, softmax) |
+| **Final Layer Dtype** | float32 (for numerical stability with mixed precision) |
+| **Batch Size** | 16 |
+| **Mixed Precision** | Enabled (`mixed_float16`) |
 
-### Training Strategy
-The model was trained in three stages:
-1. **Stage 1 (Baseline):** MobileNetV2 backbone frozen; only the top classification head was trained.
-2. **Stage 2 (Class-Weighted):** Same as baseline, but with class weights applied to handle dataset imbalances.
-3. **Stage 3 (Fine-Tuning):** The last 30 layers of MobileNetV2 were unfrozen. **BatchNormalization layers were kept frozen** to prevent destroying the learned statistics.
+### Why MobileNetV2?
 
-The final model was selected based on validation performance during Stage 3.
+- **Lightweight architecture** — efficient for both training and inference
+- **Strong transfer learning baseline** — ImageNet weights provide rich feature representations
+- **Reduced training requirements** — only the classification head and top layers need training
+- **Suitable for eventual mobile deployment** — can be converted to TFLite for on-device inference
+
+### Data Augmentation
+
+Applied only to the training set to improve generalization:
+
+- `RandomFlip` (horizontal)
+- `RandomRotation` (10%)
+- `RandomZoom` (10%)
+- `RandomTranslation` (10% horizontal and vertical)
+- `RandomContrast` (10%)
+
+### Three-Stage Training Pipeline
+
+| Stage | Description | Backbone | Learning Rate | Epochs |
+|---|---|---|---|---|
+| **1. Baseline** | Train classification head only | Frozen | 1e-3 | 15 |
+| **2. Class-Weighted** | Apply class weights for imbalanced classes | Frozen | 1e-3 | 15 |
+| **3. Fine-Tuning** | Unfreeze last 30 layers, keep BatchNorm frozen | Partially unfrozen | 1e-5 | 10 |
+
+**Key detail:** During fine-tuning (Stage 3), all `BatchNormalization` layers remain frozen to prevent destroying the running mean/variance statistics learned from ImageNet.
+
+The experiments were compared using validation metrics, and the **fine-tuned model** was selected as the final model based on the best validation accuracy.
 
 ---
 
 ## 📊 Dataset (PlantVillage)
 
-The disease detection model was trained on the PlantVillage dataset, which includes images of crops in both healthy and diseased states.
+The disease detection model was trained on the **PlantVillage** dataset.
 
-- **Total Classes:** 38 (combinations of crops and specific diseases or healthy states)
-- **Dataset Split:** 70% Train, 15% Validation, 15% Test
-- **Total Test Images:** 8,176
+| Property | Value |
+|---|---|
+| **Total Images** | ~54,305 |
+| **Total Classes** | 38 |
+| **Crop Species** | 14 (Apple, Blueberry, Cherry, Corn, Grape, Orange, Peach, Pepper, Potato, Raspberry, Soybean, Squash, Strawberry, Tomato) |
+| **Split** | 70% Train / 15% Validation / 15% Test |
+| **Test Set Size** | 8,176 images |
+| **Random Seed** | 42 |
 
-**⚠️ Important:** The raw PlantVillage dataset is intentionally NOT committed to GitHub due to its size. To retrain the model, you must download the dataset separately and prepare it using the provided scripts.
+### ⚠️ Dataset Not Included in Repository
+
+The raw PlantVillage dataset is **intentionally NOT committed** to GitHub because of its large size (~2 GB).
+
+The dataset is required **only for:**
+- Re-running the dataset preparation script
+- Retraining the model from scratch
+- Reproducing the full evaluation pipeline
+
+The dataset is **NOT required for:**
+- Running the Django API server
+- Making disease predictions (the trained model is already included)
+- Running the CLI prediction script
+
+To prepare the dataset for retraining, see `scripts/prepare_disease_dataset.py`.
+
+For dataset details, see [docs/DISEASE_DATASET.md](docs/DISEASE_DATASET.md).
 
 ---
 
-## 📈 Training Results & Model Comparison
+## 📈 Training Results
 
-The final evaluation was performed on the unseen Test Set.
+### Final Test Set Metrics (Disease Detection)
 
 | Metric | Value |
-|--------|-------|
-| Test Accuracy | 0.9705 (97.05%) |
-| Macro F1 Score | 0.9657 |
-| Weighted F1 Score | 0.9706 |
-| Total Parameters | 2,306,662 |
-| Trainable Parameters| 1,559,398 |
-| Model Size | ~33.2 MB |
+|---|---|
+| **Test Accuracy** | 0.9705 (97.05%) |
+| **Macro F1 Score** | 0.9657 |
+| **Weighted F1 Score** | 0.9706 |
+| **Total Parameters** | 2,306,662 |
+| **Trainable Parameters** | 1,559,398 |
+| **Non-trainable Parameters** | 747,264 |
+| **Model File Size** | ~33.2 MB |
 
 ### Model Comparison (Validation Metrics)
 
-| Experiment | Backbone | Validation Accuracy | Validation Loss | Notes |
-|------------|----------|---------------------|-----------------|-------|
-| `exp_baseline` | MobileNetV2 | 0.9515 | 0.1542 | Stage 1 (Frozen Backbone) |
-| `exp_class_weight` | MobileNetV2 | 0.9493 | 0.1568 | Stage 2 (Class Weights) |
-| `exp_finetuned` | MobileNetV2 | **0.9717** | **0.0834** | Stage 3 (Last 30 layers un-frozen) |
+| Experiment | Validation Accuracy | Validation Loss | Notes |
+|---|---|---|---|
+| `exp_baseline` | 0.9515 | 0.1542 | Stage 1 — Frozen backbone |
+| `exp_class_weight` | 0.9493 | 0.1568 | Stage 2 — Class weights applied |
+| `exp_finetuned` | **0.9717** | **0.0834** | Stage 3 — Last 30 layers unfrozen |
 
-*The `exp_finetuned` model was selected as the final production model (`plant_disease_model.keras`).*
+> **Note:** The validation metrics above were used for model selection. The test metrics in the table above are from a **separate, held-out test set** that was never seen during training or model selection.
+
+The `exp_finetuned` model was selected as the final production model and saved as:
+`ml/disease/artifacts/plant_disease_model.keras`
+
+For per-class metrics, see `ml/disease/evaluation/classification_report.txt`.
 
 ---
 
 ## 🔌 API Documentation
 
-### 1. Disease Detection
+### 1. Crop Recommendation
+
+- **Endpoint:** `POST /api/v1/crops/recommend/`
+- **Content-Type:** `application/json`
+
+**Request Body (all fields required):**
+
+| Field | Type | Description | Constraints |
+|---|---|---|---|
+| `nitrogen` | float | Soil Nitrogen (N) | ≥ 0 |
+| `phosphorus` | float | Soil Phosphorus (P) | ≥ 0 |
+| `potassium` | float | Soil Potassium (K) | ≥ 0 |
+| `temperature` | float | Average Temperature (°C) | — |
+| `humidity` | float | Relative Humidity (%) | 0–100 |
+| `ph` | float | Soil pH value | 0–14 |
+| `rainfall` | float | Rainfall (mm) | ≥ 0 |
+
+**Example Request:**
+```json
+{
+    "nitrogen": 90,
+    "phosphorus": 42,
+    "potassium": 43,
+    "temperature": 25.5,
+    "humidity": 80.0,
+    "ph": 6.5,
+    "rainfall": 200.0
+}
+```
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "id": 1,
+        "created_at": "2026-08-25T16:50:30.868484+05:30",
+        "input": {
+            "nitrogen": 90.0,
+            "phosphorus": 42.0,
+            "potassium": 43.0,
+            "temperature": 25.5,
+            "humidity": 80.0,
+            "ph": 6.5,
+            "rainfall": 200.0
+        },
+        "recommendations": [
+            {"rank": 1, "crop": {"id": 21, "name": "rice", ...}, "score": 0.504},
+            {"rank": 2, "crop": {"id": 9, "name": "jute", ...}, "score": 0.482},
+            {"rank": 3, "crop": {"id": 18, "name": "papaya", ...}, "score": 0.014}
+        ]
+    }
+}
+```
+
+---
+
+### 2. Disease Detection
+
 - **Endpoint:** `POST /api/v1/crops/disease/predict/`
 - **Content-Type:** `multipart/form-data`
-- **Request Field:** `image` (File upload)
+- **Request Field:** `image` (file upload — JPEG, PNG, etc.)
 
 **Example Response:**
 ```json
@@ -181,7 +389,7 @@ The final evaluation was performed on the unseen Test Set.
             "crop": "Tomato",
             "disease": "Late blight",
             "status": "diseased",
-            "score": 0.9982
+            "score": 0.9878
         },
         "top_3": [
             {
@@ -189,76 +397,214 @@ The final evaluation was performed on the unseen Test Set.
                 "crop": "Tomato",
                 "disease": "Late blight",
                 "status": "diseased",
-                "score": 0.9982
+                "score": 0.9878
             },
-            ...
+            {
+                "class_name": "Tomato___Early_blight",
+                "crop": "Tomato",
+                "disease": "Early blight",
+                "status": "diseased",
+                "score": 0.0089
+            },
+            {
+                "class_name": "Tomato___healthy",
+                "crop": "Tomato",
+                "disease": "healthy",
+                "status": "healthy",
+                "score": 0.0021
+            }
         ]
     }
 }
 ```
 
-### 2. Crop Recommendation
-- **Endpoint:** `POST /api/v1/crops/recommend/`
-- **Content-Type:** `application/json`
+**Response Field Descriptions:**
 
-*Refer to [docs/API.md](docs/API.md) for full API details.*
+| Field | Description |
+|---|---|
+| `class_name` | The raw PlantVillage class label (e.g., `Tomato___Late_blight`) |
+| `crop` | The identified crop species (e.g., `Tomato`) |
+| `disease` | The specific disease name, or `healthy` if no disease detected |
+| `status` | Either `healthy`, `diseased`, or `uncertain` (if score < 0.5) |
+| `score` | The model's softmax probability (0.0–1.0). Example: 0.9878 ≈ 98.78% confidence. **This is the model's statistical confidence, not a guaranteed diagnosis.** |
+
+---
+
+### 3. Other Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/crops/` | List all supported crops (paginated) |
+| `GET` | `/api/v1/crops/{id}/` | Get crop details |
+| `GET` | `/api/v1/crops/recommendations/history/` | Past recommendation history |
+| `GET` | `/api/docs/` | Swagger UI |
+| `GET` | `/api/schema/` | OpenAPI schema |
+
+For complete API documentation, see [docs/API.md](docs/API.md).
+
+---
+
+## 🧪 Testing APIs with Postman
+
+### Disease Detection
+
+1. Start the Django server (`python manage.py runserver`).
+2. Open Postman and create a new **POST** request.
+3. Set URL to: `http://127.0.0.1:8000/api/v1/crops/disease/predict/`
+4. Under **Body**, select **form-data**.
+5. Add a key named `image`, change its type to **File**.
+6. Select a plant leaf image from your computer.
+7. Click **Send**.
+8. You should receive a JSON response with `prediction` and `top_3` fields.
+
+### Crop Recommendation
+
+1. Create a new **POST** request in Postman.
+2. Set URL to: `http://127.0.0.1:8000/api/v1/crops/recommend/`
+3. Under **Body**, select **raw** and change the type to **JSON**.
+4. Paste the following:
+```json
+{
+    "nitrogen": 90,
+    "phosphorus": 42,
+    "potassium": 43,
+    "temperature": 25.5,
+    "humidity": 80.0,
+    "ph": 6.5,
+    "rainfall": 200.0
+}
+```
+5. Click **Send**.
+6. You should receive a JSON response with top 3 crop recommendations.
 
 ---
 
 ## 🚀 Running the Project
 
-### Setup Guide
+### Prerequisites
+
+- Python 3.10+ (Python 3.12 recommended)
+- pip
+- Git
+
+### Setup
+
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
    cd crop-recomend
    ```
+
 2. **Create and activate a virtual environment:**
    ```bash
    python -m venv venv
-   venv\Scripts\activate        # Windows
-   # source venv/bin/activate   # macOS/Linux
+
+   # Windows (Command Prompt)
+   venv\Scripts\activate
+
+   # Windows (PowerShell)
+   venv\Scripts\Activate.ps1
+
+   # macOS / Linux / WSL
+   source venv/bin/activate
    ```
-3. **Install requirements:**
+
+3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
+
 4. **Configure environment variables:**
    ```bash
-   copy .env.example .env       # Windows
-   # cp .env.example .env       # macOS/Linux
-   # Edit .env and set your SECRET_KEY
+   # Windows
+   copy .env.example .env
+
+   # macOS / Linux / WSL
+   cp .env.example .env
    ```
+   Edit `.env` and set your `SECRET_KEY`.
+
 5. **Run Django migrations:**
    ```bash
    cd backend
    python manage.py migrate
    ```
+
 6. **Start the Django server:**
    ```bash
    python manage.py runserver
    ```
 
-**Note on ML Models:** The trained final model for disease detection (`plant_disease_model.keras`) is already included in the repository. **You do not need to retrain the model to use the API.** 
+7. **Access the API:**
+   - API Base: `http://127.0.0.1:8000/api/v1/crops/`
+   - Swagger Docs: `http://127.0.0.1:8000/api/docs/`
+
+> **Important:** The trained disease model (`plant_disease_model.keras`) is already included in the repository. **You do not need to retrain the model to use the API.** The model is loaded automatically when the disease prediction endpoint is called.
+
+### WSL2 Environment (for GPU-accelerated training/inference)
+
+The disease detection model was trained using TensorFlow with GPU support on WSL2 + Ubuntu. If you want to use the same environment:
+
+```bash
+# From WSL2/Ubuntu terminal
+source ~/crop-disease-venv/bin/activate
+cd "/mnt/d/Projects/Django backend/crop-recomend/backend"
+python manage.py runserver
+```
+
+The project repository is stored on the Windows filesystem and accessed from WSL via `/mnt/d/...`.
 
 ---
 
-## 💻 Command-Line Disease Prediction Example
+## ⚡ GPU / CPU Support
 
-You can run disease prediction directly from the command line using the provided script without starting the server:
+- **GPU acceleration** was used during model training via TensorFlow with NVIDIA CUDA/cuDNN on WSL2.
+- An **NVIDIA GPU is NOT required** to run the API server or make predictions. TensorFlow will fall back to CPU inference automatically.
+- **CPU inference** is functional but slower than GPU inference.
+- The PlantVillage dataset is required **only for retraining**, not for ordinary inference.
+- Mixed precision (`mixed_float16`) is used during training to reduce GPU memory usage. It does not affect CPU inference.
+
+---
+
+## 💻 Command-Line Disease Prediction
+
+You can run disease prediction directly from the command line without starting the Django server:
 
 ```bash
 # Run from the project root
 python scripts/predict_disease.py "path/to/your/leaf_image.jpg"
 ```
 
+The script loads the trained model, processes the image, and prints:
+- Crop name
+- Disease name
+- Health status
+- Prediction score
+- Top 3 predictions
+
+> **Note:** The image path must point to an actual image file on your local filesystem.
+
 ---
 
-## 📄 Documentation Links
-- [API Reference](docs/API.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [ML Model Details](docs/ML_MODEL.md)
-- [Setup Guide](docs/SETUP.md)
+## 📄 Documentation
+
+| Document | Description |
+|---|---|
+| [API Reference](docs/API.md) | Full API endpoint documentation |
+| [Architecture](docs/ARCHITECTURE.md) | System architecture and design |
+| [ML Model Details](docs/ML_MODEL.md) | Both ML models overview |
+| [Crop Recommendation Report](docs/ML_MODEL_REPORT.md) | Detailed crop model report |
+| [Disease Model Report](docs/DISEASE_MODEL_REPORT.md) | Disease model training report |
+| [Disease Model Card](docs/DISEASE_MODEL_CARD.md) | Standardized model card |
+| [Disease Dataset](docs/DISEASE_DATASET.md) | PlantVillage dataset details |
+| [Crop Data](docs/CROP_DATA.md) | Crop database documentation |
+| [Setup Guide](docs/SETUP.md) | Detailed setup instructions |
+
+---
+
+## 📄 License
+
+This project is developed as a college industrial-training project.
 
 ---
 
