@@ -39,7 +39,7 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link to="/crop-recommendation">
-                <Button size="lg" className="bg-white text-emerald-800 hover:bg-emerald-50 shadow-lg shadow-black/10">
+                <Button size="lg" className="bg-green text-emerald-800 hover:bg-emerald-50 shadow-lg shadow-black/10">
                   Get Crop Advice
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -210,7 +210,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/crop-recommendation">
-                <Button size="lg" className="bg-white text-emerald-800 hover:bg-emerald-50">
+                <Button size="lg" className="bg-green text-emerald-800 hover:bg-emerald-50">
                   Recommend Crops
                 </Button>
               </Link>
