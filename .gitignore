@@ -22,6 +22,11 @@ crop-disease-venv/
 # --- Environment Secrets ---
 .env
 
+# --- Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
 # --- Django ---
 *.sqlite3
 db.sqlite3
