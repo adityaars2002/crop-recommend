@@ -9,12 +9,22 @@ This allows future versions (/api/v2/) without breaking existing clients.
 
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
 )
 
+
+def health_check(request):
+    """Lightweight health check endpoint for Render."""
+    return JsonResponse({"status": "ok"})
+
+
 urlpatterns = [
+    # --- Health Check ---
+    path('api/health/', health_check, name='health-check'),
+
     # --- Django Admin ---
     path('admin/', admin.site.urls),
 

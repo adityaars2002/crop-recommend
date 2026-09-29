@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 # ==============================================================================
 # PATHS
@@ -43,6 +44,18 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Render sets RENDER_EXTERNAL_HOSTNAME automatically
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# CSRF trusted origins for production (needed when frontend POSTs to backend)
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+
 # ==============================================================================
 # APPLICATION DEFINITION
 # ==============================================================================
@@ -67,6 +80,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serve static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # Must be before CommonMiddleware
     'django.middleware.common.CommonMiddleware',
@@ -99,15 +113,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # ==============================================================================
 # DATABASE
 # ==============================================================================
-# Using SQLite for development. The field choices and ORM usage are
-# PostgreSQL-compatible, so switching to PostgreSQL for production
-# requires only changing this configuration.
+# Uses DATABASE_URL if set (e.g., PostgreSQL on Render), otherwise falls
+# back to SQLite for local development.
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
 }
 
 # ==============================================================================
@@ -135,6 +148,11 @@ USE_TZ = True
 # ==============================================================================
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise — compressed and cached static files in production
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ==============================================================================
 # DEFAULT PRIMARY KEY
@@ -147,11 +165,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ==============================================================================
 
 REST_FRAMEWORK = {
-    # Use JSON as the default renderer
+    # Use JSON as the default renderer; enable Browsable API only in debug
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ],
+    ] + (
+        ['rest_framework.renderers.BrowsableAPIRenderer'] if DEBUG else []
+    ),
 
     # Default parser classes
     'DEFAULT_PARSER_CLASSES': [

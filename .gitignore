@@ -51,12 +51,16 @@ desktop.ini
 ml/artifacts/*.joblib
 ml/artifacts/*.pkl
 ml/artifacts/*.h5
+# Do NOT ignore the production model and metadata
+!ml/artifacts/crop_recommendation_model.joblib
+!ml/artifacts/feature_metadata.json
+!ml/artifacts/model_metadata.json
 ml/evaluation/results/*.png
 
 # --- ML Artifacts (Plant Disease Detection) ---
 # Ignore experimental models
 ml/disease/artifacts/exp_*.keras
-# Do NOT ignore the final model
+# Do NOT ignore the final model — it is required for deployment
 !ml/disease/artifacts/plant_disease_model.keras
 
 # --- Data & Datasets (large files) ---

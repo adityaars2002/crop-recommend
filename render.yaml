@@ -1,0 +1,71 @@
+# ==============================================================================
+# Render Blueprint — Smart Agriculture System
+# ==============================================================================
+# This file defines both the backend web service and the frontend static site.
+# Push to GitHub and connect to Render to auto-deploy.
+#
+# IMPORTANT: After the first deploy, you must set environment variables
+# in the Render dashboard (SECRET_KEY, CORS_ALLOWED_ORIGINS, etc.)
+# ==============================================================================
+
+services:
+  # ============================================================================
+  # Backend — Django REST API + ML Models
+  # ============================================================================
+  - type: web
+    name: smart-agriculture-api
+    runtime: python
+    rootDir: ./
+    buildCommand: |
+      pip install -r requirements.txt &&
+      cd backend &&
+      python manage.py collectstatic --noinput &&
+      python manage.py migrate
+    startCommand: cd backend && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false  # Set manually after frontend deploys
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false  # Set manually after frontend deploys
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-agriculture-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: "3.11.10"
+
+  # ============================================================================
+  # Frontend — React/Vite Static Site
+  # ============================================================================
+  - type: web
+    name: smart-agriculture-frontend
+    runtime: static
+    rootDir: ./frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false  # Set to the backend URL after backend deploys
+
+# ==============================================================================
+# Database — PostgreSQL (Render free tier)
+# ==============================================================================
+databases:
+  - name: smart-agriculture-db
+    plan: free
+    databaseName: smart_agriculture
+    user: smart_agri_user
